@@ -2,7 +2,7 @@
   <div class="goodsinfo">
     <van-swipe :autoplay="3000">
       <van-swipe-item v-for="(image, index) in listthumimages" :key="index">
-        <img v-lazy="image.src">
+        <img v-lazy="image">
       </van-swipe-item>
     </van-swipe>
     <div class="shop">
@@ -17,8 +17,8 @@
         </p>
         <div class="shop-vof">
           <div class="shop-mod">购买数量：</div>
-          <transition @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter">
-            <div class="btn" v-if="flag"></div>
+          <transition v-on:before-enter="bEnter" v-on:enter="enter" v-on:after-enter="aEnter">
+            <div class="btn" v-show="show"></div>
           </transition>
           <van-stepper v-model="value"/>
         </div>
@@ -46,15 +46,19 @@
 </template>
 <script>
 import { Toast } from "vant";
+import { mapGetters, mapMutations } from "vuex";
 export default {
   data: () => ({
-    flag: false,
+    show: false,
     value: 1,
     id: "",
     listgetinfo: {},
     listthumimages: [],
-    disabled:false
+    disabled: false
   }),
+  computed: {
+    ...mapGetters([""])
+  },
   created() {
     this.id = this.$route.params.id;
     this.getinfo();
@@ -77,7 +81,7 @@ export default {
     async getthumimages() {
       var id = 100 + parseInt(this.id);
       const res = await this.$http.get("/api/getthumimages/" + id);
-      //   console.log(res);
+      // console.log(res);
       var {
         status,
         data: { message }
@@ -88,38 +92,47 @@ export default {
         Toast("获取内容失败");
       }
     },
-    grtBound(){
-      const ballpos = document.querySelector(".btn").getBoundingClientRect();
-      const badgepos = document.querySelector(".van-info").getBoundingClientRect();
-
-    },
-    butn(){
-      this.flag = !this.flag;
+    butn() {
+      this.show = !this.show;
       this.disabled = !this.disabled;
+      const goodsinfo = {
+        value: this.value,
+        id: this.id,
+        title: this.listgetinfo.title,
+        sell_price: this.listgetinfo.sell_price
+      };
       setTimeout(() => {
         this.disabled = !this.disabled;
-      }, 600);
+        //简写mapMutations调用
+        this.addToCar(goodsinfo)
+        // this.$store.commit("addToCar", goodsinfo);
+        this.value = 1;
+      }, 1000);
     },
-    beforeEnter(el) {
+    bEnter(el) {
       el.style.transform = "translate(0,0)";
     },
     enter(el, done) {
-      el.offsetWidth;
+      el.offsetTop;
 
       const ballpos = document.querySelector(".btn").getBoundingClientRect();
-      const badgepos = document.querySelector(".van-info").getBoundingClientRect();
+      const badgepos = document
+        .querySelector(".van-info")
+        .getBoundingClientRect();
       const xbon = badgepos.left - ballpos.left;
       const ybon = badgepos.top - ballpos.top;
 
       el.style.transform = `translate(${xbon}px,${ybon}px)`;
-      el.style.transition = "all 1s ease";
+      el.style.transition = "all 1s cubic-bezier(0.43,-0.54, 0.74, 0.5)";
       done();
     },
-    afterEnter(el) {
-      setTimeout(() => {
-        this.flag = !this.flag;
-      }, 450);
-    }
+    aEnter(el) {
+      // setTimeout(() => {
+      this.show = !this.show;
+      // }, 400);
+    },
+    //简写
+    ...mapMutations(['addToCar'])
   }
 };
 </script>
@@ -184,6 +197,7 @@ export default {
           float: left;
         }
         .btn {
+          opacity: 1;
           position: absolute;
           left: 120px;
           top: 12px;

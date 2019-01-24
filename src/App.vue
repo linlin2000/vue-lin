@@ -1,13 +1,19 @@
 <template>
   <div id="app">
-    <van-nav-bar class="app-nav" title="滴···滴滴！！！" left-text="返回" left-arrow @click-left="onClickLeft"/>
+    <van-nav-bar
+      class="app-nav"
+      title="滴···滴滴！！！"
+      left-text="返回"
+      left-arrow
+      @click-left="onClickLeft"
+    />
     <transition>
       <router-view to="/index"></router-view>
     </transition>
     <van-tabbar v-model="active">
       <van-tabbar-item icon="home-o" to="/index">首页</van-tabbar-item>
-      <van-tabbar-item icon="user-circle-o" to="/member" >会员中心</van-tabbar-item>
-      <van-tabbar-item icon="cart-circle-o" info="0" to="/Shopping">购物车</van-tabbar-item>
+      <van-tabbar-item icon="user-circle-o" to="/member">会员中心</van-tabbar-item>
+      <van-tabbar-item icon="cart-circle-o" :info="getAllCount" to="/Shopping">购物车</van-tabbar-item>
       <van-tabbar-item icon="search" to="/search">search</van-tabbar-item>
     </van-tabbar>
   </div>
@@ -15,6 +21,7 @@
 
 <script>
 import { Toast } from "vant";
+import { mapGetters } from "vuex";
 export default {
   name: "App",
   data() {
@@ -26,6 +33,13 @@ export default {
     onClickLeft() {
       history.back();
     }
+  },
+  computed: {
+    // getAllCount() {
+    //   return this.$store.getters.getAllCount;
+    // },
+    //简写方式
+    ...mapGetters(["getAllCount"])
   }
 };
 </script>
@@ -44,7 +58,7 @@ export default {
   transform: translateX(100%);
 }
 .v-leave-to {
-  opacity: 0; 
+  opacity: 0;
   position: absolute;
   transform: translateX(-100%);
   left: -10000%;

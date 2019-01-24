@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import store from './store'
 
 import axios from 'axios'
 Vue.prototype.$http=axios
@@ -13,7 +14,7 @@ Vue.filter('datefmt', (data,pattern='YYYY-MM-DD HH:mm:ss') => {
   return moment(data).format(pattern)
 })
 
-import { Button, NavBar, Stepper ,Tab, Tabs, Tabbar, TabbarItem,Panel , Icon, Card ,Search, Row, Col ,Swipe, SwipeItem ,Lazyload } from 'vant'
+import { Button, NavBar,SubmitBar, Stepper,Checkbox ,CheckboxGroup,Tab, Tabs, Tabbar, TabbarItem,Panel , Icon, Card ,Search, Row, Col ,Swipe, SwipeItem ,Lazyload } from 'vant'
 Vue
   .use(Button)
   .use(NavBar)
@@ -31,6 +32,9 @@ Vue
   .use(Tab)
   .use(Tabs)
   .use(Stepper)
+  .use(Checkbox)
+  .use(CheckboxGroup)
+  .use(SubmitBar);
 
 Vue.config.productionTip = false
 
@@ -38,6 +42,7 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })
